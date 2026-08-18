@@ -34,7 +34,10 @@ document.title = `Shop ${BRAND.name}`;
    ═══════════════════════════════════════════════════════════ */
 
 const ENDPOINT = `https://${BRAND.shopDomain}/api/${BRAND.apiVersion}/graphql.json`;
-const CACHE_KEY = `catalog:${BRAND.slug}`;
+// Bump the version segment whenever the cached product shape changes, or
+// returning shoppers keep reading a stale object for the full TTL.
+// v2: variants carry image/alt.
+const CACHE_KEY = `catalog:v2:${BRAND.slug}`;
 const CACHE_TTL = 5 * 60 * 1000;
 
 async function gql(query, variables = {}) {
@@ -75,6 +78,7 @@ const CATALOG_QUERY = `
             id title availableForSale
             price { amount currencyCode }
             selectedOptions { name value }
+            image { url altText }
           }}}
         }}
       }
@@ -150,6 +154,10 @@ async function loadCatalog() {
       inStock: v.node.availableForSale,
       price: v.node.price,
       options: v.node.selectedOptions || [],
+      // Null unless the client attached an image to this specific variant.
+      // The card falls back to the product's featured image when absent.
+      image: v.node.image?.url || null,
+      alt: v.node.image?.altText || null,
     })),
   }));
 
@@ -345,10 +353,16 @@ function renderCard(p) {
   // land the shopper on a disabled button for a product that IS buyable.
   let selected = p.variants.find((v) => v.inStock) || p.variants[0];
 
+  // A variant image wins over the product's featured image where one exists,
+  // so a sampler opens on the pack size the chooser has selected. Falls back
+  // to the product image, so single-variant products are unaffected.
+  const openImg = selected.image || p.image;
+  const openAlt = selected.image ? (selected.alt || p.alt) : p.alt;
+
   card.innerHTML = `
     <div class="card__media">
-      ${p.image
-        ? `<img src="${p.image}" alt="${escapeAttr(p.alt)}" loading="lazy" width="600" height="600">`
+      ${openImg
+        ? `<img src="${openImg}" alt="${escapeAttr(openAlt)}" loading="lazy" width="600" height="600">`
         : ""}
       ${!p.inStock ? `<span class="card__flag card__flag--out">${escapeHtml(L.soldOutLabel || "Sold out")}</span>`
         : limited ? `<span class="card__flag">Limited</span>` : ""}
@@ -371,7 +385,18 @@ function renderCard(p) {
   btn.className = "add-btn";
   btn.type = "button";
 
+  const mediaImg = card.querySelector(".card__media img");
+
   function paint() {
+    // Swap the artwork with the chooser. Guarded on a real change so we never
+    // reassign the same src and retrigger a decode on every repaint.
+    if (mediaImg) {
+      const next = selected.image || p.image;
+      if (next && mediaImg.getAttribute("src") !== next) {
+        mediaImg.setAttribute("src", next);
+        mediaImg.setAttribute("alt", selected.image ? (selected.alt || p.alt) : p.alt);
+      }
+    }
     priceEl.textContent = money(selected.price.amount, selected.price.currencyCode);
     const buyable = p.inStock && selected.inStock;
     btn.textContent = buyable ? (L.addLabel || "Add") : (L.soldOutLabel || "Sold out");
