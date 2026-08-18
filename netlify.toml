@@ -1,0 +1,39 @@
+[build]
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Portals stay noindex until the client agreement is signed.
+    # Drop this line AND robots.txt at launch — both, or the site
+    # stays out of the index.
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Images are stable and safe to cache.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Code is NOT safe to cache. Filenames aren't content-hashed, so a cached
+# app.js paired with a freshly deployed index.html blanks the page for an
+# hour — that happened on the nav deploy. These must revalidate every load.
+[[headers]]
+  for = "/assets/app.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# brand.config.js changes per deploy — don't let it go stale in a CDN.
+[[headers]]
+  for = "/brand.config.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Message sent</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+
+<!--
+  Netlify redirects here after a NON-JavaScript form post. With JS enabled the
+  help panel posts over fetch and shows success inline, so most visitors never
+  see this page. It exists so the form still works without JS.
+-->
+
+<main class="shell shell--solo">
+  <div class="state">
+    <h1 class="state__title" id="thanks-title">Message sent</h1>
+    <p id="thanks-line">Thanks — we've got it. We'll reply by email shortly.</p>
+    <p><a href="/" id="thanks-back">Back to the shop</a></p>
+  </div>
+</main>
+
+<script type="module">
+  // Paint the brand tokens this page needs. styles.css has no hardcoded
+  // colors by design, so without these the page renders unstyled.
+  import { BRAND } from "/brand.config.js";
+  const root = document.documentElement;
+  const C = BRAND.colors;
+  for (const [prop, val] of Object.entries({
+    "--bg": C.bg, "--surface": C.surface, "--surface-alt": C.surfaceAlt,
+    "--text": C.text, "--muted": C.muted, "--line": C.line,
+    "--accent": C.accent, "--accent-text": C.accentText, "--gold": C.gold,
+    "--font-display": BRAND.fonts.display, "--font-body": BRAND.fonts.body,
+  })) root.style.setProperty(prop, val);
+
+  const font = document.createElement("link");
+  font.rel = "stylesheet";
+  font.href = BRAND.fonts.googleFontsHref;
+  document.head.appendChild(font);
+
+  document.title = `Message sent \u2014 ${BRAND.name}`;
+  if (BRAND.helpForm?.success) {
+    document.getElementById("thanks-line").textContent = BRAND.helpForm.success;
+  }
+</script>
+
+</body>
+</html>

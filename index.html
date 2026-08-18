@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- Replace with the brand's own one-liner. Kept static because
+     crawlers read it before app.js runs. -->
+<meta name="description" content="REPLACE — craft beer shipped to your door.">
+<title>Shop</title><!-- app.js rewrites this from BRAND.name -->
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+
+<div class="announce" id="announce"></div>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="masthead__logo" id="brand-home" href="#">
+      <img id="brand-logo" alt="">
+      <span class="masthead__name" id="brand-name"></span>
+    </a>
+    <span class="masthead__spacer"></span>
+    <nav class="masthead__nav" id="brand-nav" aria-label="Shop"></nav>
+    <button class="cart-btn" id="cart-open" type="button" aria-haspopup="dialog">
+      Cart
+      <span class="cart-btn__count" id="cart-count" hidden>0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero__copy">
+      <p class="hero__kicker" id="hero-kicker"></p>
+      <h1 class="hero__title" id="hero-title">
+        <span id="hero-lead"></span>
+        <img id="hero-mark" alt="" hidden>
+      </h1>
+      <p class="hero__tagline" id="hero-tagline"></p>
+    </div>
+    <img class="hero__badge" id="hero-badge" alt="" hidden>
+  </section>
+
+  <!-- Promo ticker. Built by app.js from BRAND.promo; the whole
+       section removes itself when promo.active is false. -->
+  <section class="tape" id="tape" hidden>
+    <p class="visually-hidden" id="tape-readable"></p>
+    <div class="tape__track" id="tape-track" aria-hidden="true"></div>
+    <p class="tape__static" id="tape-static" hidden></p>
+    <span class="tape__fade" aria-hidden="true"></span>
+    <button class="tape__pause" id="tape-pause" type="button" aria-pressed="false">
+      <span class="visually-hidden">Pause the scrolling banner</span>
+      <span class="tape__pause-icon" aria-hidden="true"></span>
+    </button>
+  </section>
+
+  <!-- Pre-sale / minimum-order notices. Painted by app.js from
+       brand.config.js; the whole strip removes itself when nothing is active. -->
+  <aside class="notices" id="notices" aria-label="Ordering information" hidden></aside>
+
+  <div class="shell">
+    <nav class="filters" id="filters-nav" aria-label="Filter by style">
+      <h2 class="filters__heading" id="filters-heading">Style</h2>
+      <ul class="filters__list" id="filters"></ul>
+    </nav>
+    <section id="grid" aria-live="polite" aria-busy="true"></section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__legal" id="footer-legal"></p>
+    <span class="masthead__spacer"></span>
+    <p>&copy; <span id="footer-year"></span></p>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+
+<aside class="drawer" id="drawer" data-open="false" role="dialog"
+       aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+  <div class="drawer__head">
+    <h2 class="drawer__title" id="drawer-title">Your Cart</h2>
+    <button class="drawer__close" id="drawer-close" type="button" aria-label="Close cart">&times;</button>
+  </div>
+
+  <div class="drawer__body" id="drawer-body"></div>
+
+  <div class="drawer__foot" id="drawer-foot" hidden>
+    <div class="drawer__error" id="drawer-error" role="alert" hidden></div>
+    <div class="drawer__total">
+      <span>Subtotal</span>
+      <span id="cart-total">—</span>
+    </div>
+    <p class="drawer__tax">Shipping and tax calculated at checkout.</p>
+    <!-- Adult signature disclosure. Painted from BRAND.adultSignature.
+         The fee itself is applied at Shopify checkout, once per order. -->
+    <p class="drawer__signature" id="drawer-signature" hidden></p>
+    <p class="drawer__presale" id="drawer-presale" hidden></p>
+    <div class="drawer__min" id="drawer-min" role="status" hidden></div>
+    <button class="checkout-btn" id="checkout" type="button">Checkout</button>
+    <p class="handoff" id="handoff"></p>
+  </div>
+</aside>
+
+<!-- ══ Help widget ═══════════════════════════════════════════════════════
+     The form markup must be REAL, STATIC HTML in this file. Netlify detects
+     forms by parsing the deployed HTML at build; a form injected by JS is
+     never registered and every submission 404s. Do not move this into app.js.
+
+     app.js posts it over fetch so the panel can show inline success. The
+     action= below is the no-JS fallback path.
+     ══════════════════════════════════════════════════════════════════════ -->
+<button class="help-fab" id="help-open" type="button"
+        aria-expanded="false" aria-controls="help-panel"
+        aria-label="Need help? Send us a message">
+  <span aria-hidden="true">?</span>
+</button>
+
+<!-- ‹REPLACE› the form name below in BOTH places, and match it to
+     helpForm.formName in brand.config.js. Netlify keys submissions on it. -->
+<div class="help-panel" id="help-panel" data-open="false" role="dialog"
+     aria-labelledby="help-title" aria-hidden="true">
+  <div class="help-panel__head">
+    <h2 class="help-panel__title" id="help-title"></h2>
+    <button class="help-panel__close" id="help-close" type="button"
+            aria-label="Close help">&times;</button>
+  </div>
+
+  <p class="help-panel__line" id="help-line"></p>
+
+  <form class="help-form" id="help-form" name="REPLACE-help" method="POST"
+        action="/thanks.html" data-netlify="true" data-netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="REPLACE-help">
+    <p class="help-form__pot">
+      <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+    </p>
+
+    <label class="help-form__label" for="help-name">Name</label>
+    <input class="help-form__input" id="help-name" name="name" type="text"
+           autocomplete="name" required>
+
+    <label class="help-form__label" for="help-email">Email</label>
+    <input class="help-form__input" id="help-email" name="email" type="email"
+           autocomplete="email" required>
+
+    <label class="help-form__label" for="help-order">Order number <span>(optional)</span></label>
+    <input class="help-form__input" id="help-order" name="order" type="text"
+           autocomplete="off">
+
+    <label class="help-form__label" for="help-message">How can we help?</label>
+    <textarea class="help-form__input help-form__textarea" id="help-message"
+              name="message" rows="4" required></textarea>
+
+    <div class="help-form__status" id="help-status" role="status" hidden></div>
+    <button class="help-form__submit" id="help-submit" type="submit">Send message</button>
+  </form>
+</div>
+
+<script type="module" src="/assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1027 @@
+/* ═══════════════════════════════════════════════════════════
+   Every color comes from a custom property set by app.js from
+   brand.config.js. No hardcoded hex in this file — that's what
+   keeps the template brand-agnostic.
+   ═══════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Announcement ─────────────────────────────────────────── */
+.announce {
+  background: var(--accent);
+  color: var(--accent-text);
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.6rem 1rem;
+}
+
+/* Pre-sale flag, ahead of the shipping line in the same bar. Boxed so it
+   reads as a status stamp rather than as more sentence. */
+.announce__flag {
+  display: inline-block;
+  margin-right: 0.6rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 3px;
+  background: var(--accent-text);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.masthead {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.masthead__inner {
+  max-width: 1240px; margin: 0 auto;
+  padding: 0.85rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.masthead__logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+.masthead__logo img { height: 52px; width: auto; }
+.masthead__name {
+  font-family: var(--font-display);
+  font-size: 1.02rem; line-height: 1;
+  font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.masthead__spacer { flex: 1; }
+/* Hero wordmark sits inline beside "Shop". Cap height, not em box: the
+   logotype's glyphs fill its frame edge to edge, so matching it to the full em
+   would render it noticeably heavier than the type next to it. */
+/* SHOP's cap height measures 0.819em in Oswald 800. The wordmark is set to
+   0.95em so HELLBENT reads clearly taller than SHOP, per their team. Its ink
+   fills the file edge to edge, so height here is true ink height. */
+#hero-mark {
+  display: inline-block; vertical-align: baseline;
+  height: 0.95em; width: auto;
+  margin-left: 0.16em;
+  position: relative; top: 0.012em;   /* optical baseline seat */
+}
+/* Nav uses uppercase display type with wide tracking by default.
+   Wraps to a full-width second row below ~560px so the logo and cart button
+   keep their space on a phone. */
+.masthead__nav { display: flex; align-items: center; gap: 1.75rem; }
+.masthead__link {
+  font-family: var(--font-display);
+  font-size: 0.82rem; color: var(--text);
+  text-decoration: none; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.masthead__link:hover { color: var(--accent); }
+
+.cart-btn {
+  position: relative;
+  background: none; border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.82rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+.cart-btn:hover { border-color: var(--accent); background: var(--surface); }
+.cart-btn__count {
+  background: var(--accent); color: var(--accent-text);
+  border-radius: 999px;
+  min-width: 1.25rem; height: 1.25rem;
+  display: grid; place-items: center;
+  font-size: 0.7rem; font-weight: 700;
+}
+.cart-btn__count[hidden] { display: none; }
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.hero {
+  max-width: 1240px; margin: 0 auto;
+  padding: clamp(2.75rem, 7vw, 4.25rem) 1.25rem clamp(1.75rem, 3.5vw, 2.5rem);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex; align-items: center; gap: clamp(1.5rem, 5vw, 4rem);
+}
+.hero__copy { flex: 1 1 auto; min-width: 0; }
+/* Claim badge filling the hero's open right side. Capped so it reads as a
+   stamp beside the headline rather than competing with it. */
+.hero__badge {
+  flex: 0 0 auto;
+  width: clamp(112px, 13vw, 168px);
+  height: auto; display: block;
+}
+.hero__kicker {
+  font-size: 0.68rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--accent);
+  font-weight: 700; margin: 0 0 0.9rem;
+}
+.hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.3rem, 6.8vw, 4.5rem);
+  font-weight: 800; line-height: 0.98;
+  letter-spacing: -0.005em;
+  margin: 0; text-transform: uppercase;
+  display: flex; align-items: baseline; flex-wrap: wrap;
+  gap: 0 0.1em;
+}
+.hero__title .thin { font-weight: 300; }
+.hero__tagline {
+  color: var(--muted);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  margin: 1.1rem 0 0; max-width: 32ch;
+}
+
+/* ── Caution-tape ticker ──────────────────────────────────── */
+/* Geometry measured off their own ticker-blank asset (2560x114): stripe
+   bands are ~15% of the height top and bottom, leaning 45deg, horizontal
+   period ~106px at that scale. Drawn here in CSS from --accent and
+   --accent-text so it needs no image and follows the palette. */
+.tape {
+  --tape-h: 61px;
+  --stripe-band: 9px;       /* ~15% of 61px, as in their artwork */
+  --stripe-ink: 21px;       /* black run, measured perpendicular */
+  --stripe-period: 40px;    /* black + amber, perpendicular */
+  position: relative;
+  height: var(--tape-h);
+  margin-bottom: 1.75rem;
+  background: var(--accent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.tape[hidden] { display: none; }
+
+/* Hazard stripes, top and bottom edges only. */
+.tape::before,
+.tape::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: var(--stripe-band);
+  background: repeating-linear-gradient(45deg,
+    var(--accent-text) 0 var(--stripe-ink),
+    var(--accent) var(--stripe-ink) var(--stripe-period));
+  z-index: 1;
+  pointer-events: none;
+}
+.tape::before { top: 0; }
+.tape::after  { bottom: 0; }
+
+.tape__track {
+  display: flex;
+  flex: none;
+  will-change: transform;
+  animation: tape-scroll var(--tape-duration, 45s) linear infinite;
+}
+.tape__half { display: flex; flex: none; }
+
+.tape__track span {
+  flex: none;
+  margin: 0 20px;                        /* their spacing */
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 86%;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+@keyframes tape-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Stop on hover and on keyboard focus as well as via the button — a
+   shopper trying to read it shouldn't have to chase it. */
+.tape:hover .tape__track,
+.tape:focus-within .tape__track,
+.tape[data-paused="true"] .tape__track { animation-play-state: paused; }
+
+/* Shown instead of the scroll when motion is reduced. */
+.tape__static {
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 2.4vw, 1.15rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent-text);
+  text-align: center;
+}
+.tape__static[hidden] { display: none; }
+
+/* Amber gutter so the scrolling copy fades out before it reaches the pause
+   control instead of colliding with it. Inset top and bottom so the hazard
+   stripes still run edge to edge behind it. */
+.tape__fade {
+  position: absolute;
+  right: 0;
+  top: var(--stripe-band);
+  bottom: var(--stripe-band);
+  width: 110px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--accent) 60%);
+}
+
+/* WCAG 2.2.2 — moving content that runs past five seconds needs a way to
+   stop it. Sits inside the band, deliberately quiet. */
+.tape__pause {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 999px;
+  background: transparent;
+  color: var(--accent-text);
+  opacity: 0.6;
+  transition: opacity 0.14s, background 0.14s;
+}
+.tape__pause:hover,
+.tape__pause:focus-visible {
+  opacity: 1;
+  background: color-mix(in srgb, var(--accent-text) 16%, transparent);
+}
+
+/* Two bars — becomes a single play triangle when paused. */
+.tape__pause-icon {
+  width: 10px; height: 12px;
+  border-left: 3.5px solid currentColor;
+  border-right: 3.5px solid currentColor;
+}
+.tape[data-paused="true"] .tape__pause-icon {
+  width: 0; height: 0;
+  border-left: 11px solid currentColor;
+  border-right: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  margin-left: 3px;
+}
+
+/* ── Notice strip ─────────────────────────────────────────── */
+/* Pre-sale, minimum order, launch promo. Sits between the hero and the
+   grid so it's read before anything is added to a cart. */
+.notices {
+  max-width: 1240px;
+  margin: 0 auto 1.75rem;
+  padding: 0 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.85rem;
+}
+.notices[hidden] { display: none; }
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+/* The minimum is the one that changes what a shopper has to do, so it
+   carries the accent edge. The others are informational. */
+.notice--lead {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+/* Wider than tall — the minimum mark is a 60x40 viewBox. Height is what's
+   fixed; width follows so the drawn marks aren't letterboxed. */
+.notice__icon {
+  flex-shrink: 0;
+  width: 46px; height: 40px;
+  color: var(--accent);
+}
+.notice__icon svg { width: 100%; height: 100%; display: block; }
+.notice--lead .notice__icon { color: var(--accent); }
+
+.notice__body { min-width: 0; }
+.notice__heading {
+  margin: 0 0 0.2rem;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.notice__line {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.shell {
+  max-width: 1240px; margin: 0 auto;
+  padding: 0 1.25rem 5rem;
+  display: grid; grid-template-columns: 190px 1fr; gap: 2.5rem;
+  align-items: start;
+}
+.shell > * { min-width: 0; }
+
+/* ── Filters ──────────────────────────────────────────────── */
+.filters { position: sticky; top: 5.5rem; }
+.filters__heading {
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 0.9rem; font-weight: 700;
+}
+.filters__list { list-style: none; margin: 0; padding: 0; }
+.filters__item + .filters__item { margin-top: 0.15rem; }
+.filters__btn {
+  width: 100%; text-align: left;
+  background: none; border: 0;
+  padding: 0.5rem 0.7rem;
+  border-radius: 7px;
+  font-size: 0.9rem; font-weight: 500;
+  color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+  transition: background 0.14s, color 0.14s;
+}
+.filters__btn:hover { background: var(--surface); color: var(--text); }
+.filters__btn[aria-pressed="true"] {
+  background: var(--surface-alt); color: var(--text); font-weight: 700;
+}
+.filters__btn[aria-pressed="true"]::before {
+  content: ""; width: 3px; align-self: stretch;
+  background: var(--accent); border-radius: 2px;
+  margin: -0.15rem 0.35rem -0.15rem -0.35rem;
+}
+.filters__count { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.filters__toggle { display: none; }
+
+/* ── Product grid ─────────────────────────────────────────── */
+.grid {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color 0.16s, transform 0.16s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card--out { opacity: 0.55; }
+
+.card__media {
+  /* Exactly matches the composite ratio (2228x1700). Any mismatch here
+     letterboxes and shrinks the product. */
+  aspect-ratio: 2228 / 1700;
+  background: var(--surface-alt);
+  position: relative; overflow: hidden;
+}
+.card__media img {
+  width: 100%; height: 100%;
+  /* contain, not cover: these renders have transparent margins, so cover would
+     crop the box or can at the edges. Padding is trimmed in the source files
+     instead, which is what actually makes them read larger. */
+  object-fit: contain;
+  /* Breathing room between the product and the card edges. The frame ratio
+     matches the image exactly, so this insets evenly on all four sides. */
+  padding: 5%;
+  transition: transform 0.4s ease;
+}
+.card__media { background: var(--surface); }
+.card:hover .card__media img { transform: scale(1.035); }
+
+.card__flag {
+  position: absolute; top: 0.7rem; left: 0.7rem;
+  background: var(--gold); color: var(--text);
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.28rem 0.5rem; border-radius: 4px;
+}
+.card__flag--out { background: var(--muted); color: #fff; }
+
+.card__body { padding: 1rem 1rem 1.15rem; display: flex; flex-direction: column; flex: 1; gap: 0.55rem; }
+.card__style {
+  font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 700;
+}
+.card__title {
+  font-family: var(--font-display);
+  font-size: 1.02rem; line-height: 1.2;
+  font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.045em;
+  margin: 0;
+}
+.card__note {
+  font-size: 0.82rem; line-height: 1.45;
+  color: var(--muted);
+  margin: 0.1rem 0 0;
+}
+/* Spec line: volume, ABV, tasting notes, pulled from the description's <li>
+   items. Deliberately NOT uppercased — these run long enough that small caps
+   wrap into an unreadable block. */
+.card__spec {
+  font-size: 0.76rem; line-height: 1.4;
+  color: var(--muted);
+  margin: 0.3rem 0 0;
+  padding-top: 0.3rem;
+  border-top: 1px solid var(--line);
+}
+/* ── Variant chooser (6-pack / 12-pack samplers) ─────────────
+   Segmented buttons up to four options; a native <select> beyond that.
+   Both sit above .card__foot so the price and Add button stay pinned to
+   the bottom of the card and stay aligned across a row. */
+.variants { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.15rem; }
+
+.variants__btn {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  min-height: 2.15rem;                 /* tap target on 375px */
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.variants__btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+.variants__btn[aria-checked="true"] {
+  background: var(--surface-alt);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.variants__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.variants__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  width: 100%;
+}
+.variants__select {
+  font: inherit;
+  font-size: 0.82rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  min-height: 2.4rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.card__foot { margin-top: auto; display: flex; align-items: center; gap: 0.75rem; padding-top: 0.4rem; }
+.card__price { font-weight: 700; font-size: 1rem; font-variant-numeric: tabular-nums; }
+
+.add-btn {
+  margin-left: auto;
+  background: var(--accent); color: var(--accent-text);
+  border: 0; border-radius: 999px;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.82rem; font-weight: 700;
+  transition: filter 0.14s;
+}
+.add-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.add-btn:disabled { background: var(--surface-alt); color: var(--muted); cursor: not-allowed; }
+
+/* ── States ───────────────────────────────────────────────── */
+.state { padding: 3.5rem 0; color: var(--muted); }
+.state__title {
+  font-family: var(--font-display); font-size: 1.15rem;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text); margin: 0 0 0.6rem;
+}
+.state a { color: var(--accent); }
+
+.skeleton {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px; height: 340px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 0.5 } 50% { opacity: 0.85 } }
+
+/* ── Cart drawer ──────────────────────────────────────────── */
+.scrim {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(0,0,0,0.55);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s;
+}
+.scrim[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 51;
+  width: min(420px, 100%);
+  height: 100dvh;
+  background: var(--bg);
+  border-left: 1px solid var(--line);
+  transform: translateX(100%);
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column;
+}
+.drawer[data-open="true"] { transform: translateX(0); }
+
+.drawer__head {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.drawer__title {
+  font-family: var(--font-display); font-size: 0.95rem; margin: 0;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em;
+}
+.drawer__close {
+  margin-left: auto; background: none; border: 0;
+  color: var(--muted); font-size: 1.5rem; line-height: 1;
+  padding: 0.2rem 0.45rem; border-radius: 6px;
+}
+.drawer__close:hover { color: var(--text); background: var(--surface); }
+
+.drawer__body { flex: 1; overflow-y: auto; padding: 1.25rem; }
+.drawer__empty { color: var(--muted); text-align: center; padding: 3rem 1rem; }
+
+.line { display: flex; gap: 0.85rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+.line:first-child { padding-top: 0; }
+.line__img { width: 62px; height: 62px; border-radius: 8px; object-fit: cover; background: var(--surface-alt); flex-shrink: 0; }
+.line__main { flex: 1; min-width: 0; }
+.line__name { font-size: 0.88rem; font-weight: 600; margin: 0 0 0.15rem; }
+.line__variant { font-size: 0.75rem; color: var(--muted); margin: 0 0 0.5rem; }
+.line__price { font-size: 0.85rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.stepper { display: inline-flex; align-items: center; gap: 0.15rem; border: 1px solid var(--line); border-radius: 999px; padding: 0.12rem; }
+.stepper button {
+  background: none; border: 0; width: 1.7rem; height: 1.7rem;
+  border-radius: 999px; color: var(--muted); font-size: 1rem; line-height: 1;
+}
+.stepper button:hover { background: var(--surface); color: var(--text); }
+.stepper output { min-width: 1.5rem; text-align: center; font-size: 0.82rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.line__remove {
+  background: none; border: 0; color: var(--muted);
+  font-size: 0.72rem; text-decoration: underline; padding: 0.2rem 0;
+}
+.line__remove:hover { color: var(--accent); }
+
+.drawer__foot { border-top: 1px solid var(--line); padding: 1.25rem; }
+.drawer__total { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; }
+.drawer__total span:last-child { font-variant-numeric: tabular-nums; }
+.drawer__tax { font-size: 0.75rem; color: var(--muted); margin: 0 0 0.5rem; }
+
+/* Adult signature disclosure. Muted, but not hidden — a shopper who
+   isn't expecting a 21+ signature on delivery is a failed delivery. */
+.drawer__signature {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--line);
+}
+.drawer__signature[hidden] { display: none; }
+
+.checkout-btn {
+  width: 100%; background: var(--accent); color: var(--accent-text);
+  border: 0; border-radius: 999px; padding: 0.9rem;
+  font-size: 0.95rem; font-weight: 700;
+  transition: filter 0.14s;
+}
+.checkout-btn:hover:not(:disabled) { filter: brightness(1.1); }
+/* Busy (preparing the Shopify cart) — a wait cursor is right here. */
+.checkout-btn:disabled { opacity: 0.6; cursor: wait; }
+/* Blocked by the minimum — a different thing entirely. Reads as unavailable
+   rather than loading, and matches how a sold-out Add button looks. */
+.checkout-btn[data-blocked="true"] {
+  background: var(--surface-alt);
+  color: var(--muted);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Seller-of-record disclosure. Legally load-bearing — never hide. */
+.handoff {
+  margin: 0.85rem 0 0; font-size: 0.74rem; line-height: 1.45;
+  color: var(--muted); text-align: center;
+}
+
+/* Pre-sale disclosure in the cart. A shopper about to pay needs to know
+   the box isn't shipping today — the announcement bar is too easy to miss. */
+.drawer__presale {
+  margin: 0 0 0.9rem;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.drawer__presale[hidden] { display: none; }
+
+/* Minimum-order gate. Sits directly above the button it disables so the
+   reason and the blocked control are read together. */
+.drawer__min {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.drawer__min[hidden] { display: none; }
+
+.drawer__error {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: 8px; padding: 0.7rem 0.85rem;
+  font-size: 0.78rem; margin-bottom: 0.85rem;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 2.5rem 1.25rem 3.5rem;
+  color: var(--muted); font-size: 0.8rem;
+}
+.footer__inner { max-width: 1240px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: baseline; }
+.footer__legal { max-width: 46ch; line-height: 1.55; }
+
+/* ── Help widget ──────────────────────────────────────────── */
+/* Stacking: masthead 40 · help 45/46 · scrim 50 · drawer 51. The cart
+   drawer deliberately covers the help widget, and openDrawer() also sets
+   body[data-drawer="open"] to take the button out of the tab order. */
+.help-fab {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 45;
+  width: 52px; height: 52px;
+  border: 0; border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-family: var(--font-display);
+  font-size: 1.5rem; font-weight: 700; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  transition: filter 0.14s, transform 0.14s;
+}
+.help-fab:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+body[data-drawer="open"] .help-fab,
+body[data-drawer="open"] .help-panel { display: none; }
+
+.help-panel {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 5.25rem;
+  z-index: 46;
+  width: min(360px, calc(100vw - 2.5rem));
+  max-height: min(560px, calc(100vh - 8rem));
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.15rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  opacity: 0; transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.16s, transform 0.16s;
+}
+.help-panel[data-open="true"] {
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+}
+
+.help-panel__head {
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.help-panel__title {
+  flex: 1; margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.help-panel__close {
+  background: none; border: 0; color: var(--muted);
+  font-size: 1.5rem; line-height: 1;
+  width: 32px; height: 32px; border-radius: 6px;
+  flex-shrink: 0;
+}
+.help-panel__close:hover { color: var(--text); background: var(--surface-alt); }
+
+.help-panel__line {
+  margin: 0 0 0.95rem;
+  font-size: 0.8rem; line-height: 1.5; color: var(--muted);
+}
+
+/* Honeypot. Hidden from people, still reachable by the bots that fill
+   every field they find — which is the whole point. */
+.help-form__pot { position: absolute; left: -9999px; }
+
+.help-form__label {
+  display: block;
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
+}
+.help-form__label span { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
+
+.help-form__input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.8rem;
+}
+.help-form__input:focus-visible { border-color: var(--accent); }
+.help-form__textarea { resize: vertical; min-height: 84px; }
+
+.help-form__status {
+  border-radius: 8px; padding: 0.65rem 0.8rem;
+  font-size: 0.78rem; line-height: 1.45;
+  margin-bottom: 0.75rem;
+}
+.help-form__status[hidden] { display: none; }
+.help-form__status--ok {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid var(--accent);
+}
+.help-form__status--bad {
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  border: 1px solid var(--gold);
+}
+.help-form__status a { color: var(--accent); }
+
+.help-form__submit {
+  width: 100%;
+  background: var(--accent); color: var(--accent-text);
+  border: 0; border-radius: 999px;
+  padding: 0.75rem;
+  font-size: 0.88rem; font-weight: 700;
+  transition: filter 0.14s;
+}
+.help-form__submit:hover:not(:disabled) { filter: brightness(1.1); }
+.help-form__submit:disabled { opacity: 0.6; cursor: wait; }
+
+/* Standalone pages (thanks.html) borrow the shell without a sidebar. */
+.shell--solo {
+  max-width: 1240px; margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: block;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .masthead__inner { flex-wrap: wrap; gap: 0.6rem 0.75rem; }
+  .masthead__logo img { height: 40px; }
+  /* Nav takes the full second row and scrolls sideways if it ever outgrows it. */
+  .masthead__nav {
+    order: 3; flex-basis: 100%;
+    gap: 1.25rem;
+    overflow-x: auto; scrollbar-width: none;
+    padding-bottom: 0.15rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.6rem;
+  }
+  .masthead__nav::-webkit-scrollbar { display: none; }
+  /* Text is small here; pad the hit area out to a thumb-sized target. */
+  .masthead__link {
+    font-size: 0.76rem;
+    display: inline-flex; align-items: center;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 960px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .shell { grid-template-columns: 1fr; gap: 1.25rem; }
+  .filters { position: static; }
+  .filters__heading { display: none; }
+  .filters__list {
+    display: flex; gap: 0.4rem; overflow-x: auto;
+    padding: 0.2rem 0 0.55rem; scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-inline: contain;
+  }
+  .filters__list::-webkit-scrollbar { display: none; }
+  .filters__item + .filters__item { margin-top: 0; }
+  .filters__item { flex: 0 0 auto; scroll-snap-align: start; }
+  .filters__btn {
+    white-space: nowrap; border: 1px solid var(--line);
+    border-radius: 999px; min-height: 44px; padding: 0.55rem 0.95rem;
+  }
+  .filters__btn[aria-pressed="true"]::before { display: none; }
+  .filters__btn[aria-pressed="true"] { border-color: var(--accent); }
+  .filters__count { display: none; }
+}
+
+@media (max-width: 680px) {
+  .announce {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .masthead__inner {
+    min-height: 64px;
+    padding: 0.55rem 0.9rem;
+    gap: 0.65rem;
+  }
+  .masthead__logo { min-width: 0; }
+  .masthead__logo img { height: 44px; max-width: 116px; object-fit: contain; }
+  /* A portal with a single "Back to Main Site" link collapses it into a round
+     ↗ icon here. With three named nav links that hides the labels entirely, so
+     the icon treatment is gone — the 560px rule above wraps the nav instead. */
+  .cart-btn {
+    min-height: 44px;
+    flex-shrink: 0;
+    padding: 0.55rem 0.8rem;
+  }
+
+  .hero {
+    padding: 2rem 1rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .hero__kicker {
+    max-width: 28ch;
+    font-size: 0.62rem;
+    line-height: 1.55;
+    margin-bottom: 0.65rem;
+  }
+  .hero { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .hero__badge { width: min(132px, 40%); }
+  .hero__title {
+    font-size: clamp(2rem, 12vw, 3.25rem);
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+  }
+  .hero__tagline { margin-top: 0.85rem; }
+
+  .shell {
+    gap: 0.85rem;
+    padding: 0 1rem 3.5rem;
+  }
+  .filters {
+    margin-inline: -1rem;
+    overflow: hidden;
+  }
+  .filters__list {
+    padding-inline: 1rem;
+    scroll-padding-inline: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .card {
+    min-height: 180px;
+    display: grid;
+    grid-template-columns: minmax(132px, 42%) 1fr;
+    border-radius: 10px;
+  }
+  .card:hover { transform: none; }
+  .card__media { aspect-ratio: 2228 / 1700; min-height: 0; }
+  .card:hover .card__media img { transform: none; }
+  .card__flag { top: 0.55rem; left: 0.55rem; }
+  .card__body { min-width: 0; padding: 0.9rem; gap: 0.4rem; }
+  .card__style { font-size: 0.6rem; line-height: 1.35; }
+  .card__title {
+    font-size: clamp(0.9rem, 4.2vw, 1.05rem);
+    overflow-wrap: anywhere;
+  }
+  .card__foot {
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .add-btn {
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+  }
+  .skeleton { height: 180px; }
+
+  .drawer { width: 100%; border-left: 0; }
+  .drawer__head { padding: 0.85rem 1rem; }
+  .drawer__close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .drawer__body { padding: 1rem; }
+  .drawer__foot {
+    padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
+    background: var(--bg);
+  }
+  .line { gap: 0.7rem; }
+  .stepper button { width: 2rem; height: 2rem; }
+  .line__remove { min-height: 44px; }
+  .checkout-btn { min-height: 48px; }
+
+  .tape {
+    --tape-h: 44px;
+    --stripe-band: 7px;
+    --stripe-ink: 15px;
+    --stripe-period: 29px;
+    margin-bottom: 1.25rem;
+  }
+  .tape__track span { font-size: 20px; margin: 0 14px; }
+  .tape__fade { width: 76px; }
+  .tape__pause { right: 0.35rem; width: 34px; height: 34px; }
+
+  .notices {
+    padding: 0 1rem;
+    margin-bottom: 1.25rem;
+    gap: 0.6rem;
+    grid-template-columns: 1fr;
+  }
+  .notice { padding: 0.8rem 0.9rem; gap: 0.7rem; }
+  .notice__icon { width: 40px; height: 34px; }
+
+  .help-fab {
+    right: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .help-panel {
+    right: 1rem; left: 1rem;
+    width: auto;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    max-height: calc(100vh - 7.5rem);
+  }
+
+  .footer { padding: 2rem 1rem max(2rem, env(safe-area-inset-bottom)); }
+  .footer__inner { display: grid; gap: 0.75rem; }
+  .footer__inner .masthead__spacer { display: none; }
+  .footer__inner p { margin: 0; }
+}
+
+@media (max-width: 380px) {
+  .masthead__logo img { max-width: 96px; }
+  .cart-btn { padding-inline: 0.7rem; }
+  .card { grid-template-columns: minmax(118px, 40%) 1fr; }
+  .card__body { padding: 0.75rem; }
+  .add-btn { width: 100%; margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .drawer { transition: none; }
+  /* Belt and braces: paintTape() already removes the track under reduced
+     motion and shows the static line. If JS hasn't run yet, this stops the
+     global 0.01ms rule from snapping the marquee to its end frame. */
+  .tape__track { animation: none !important; transform: none !important; }
+}

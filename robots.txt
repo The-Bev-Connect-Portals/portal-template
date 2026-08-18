@@ -1,0 +1,5 @@
+# Portals stay out of the index until the client agreement is signed.
+# At launch: delete this file AND remove the X-Robots-Tag line in
+# netlify.toml. Removing only one leaves the site deindexed.
+User-agent: *
+Disallow: /
