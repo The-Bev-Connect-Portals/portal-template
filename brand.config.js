@@ -240,7 +240,7 @@ export const BRAND = {
   //  Give every brand its own so it can be rotated independently.
   //  NEVER put an Admin API token here.
   storefrontToken: "REPLACE",              // ‹REPLACE› ~32 hex chars
-  apiVersion: "2025-01",
+  apiVersion: "2026-04",
 
   //  Written onto the Shopify cart as an attribute. This is what the
   //  Shopify Flow order-tagging workflow keys on for portal attribution,
