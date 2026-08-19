@@ -307,9 +307,29 @@ function renderFilters() {
   }
 }
 
+// Shopify smart collections cannot be sorted manually — only manual
+// collections can, and going manual would mean hand-adding every future
+// product and losing the tag automation. So merchandising order lives in
+// brand.config.js as an explicit list of handles. Anything not listed keeps
+// its Shopify order and sits after the listed items, so a newly tagged
+// product still appears rather than vanishing.
+function applyOrder(list) {
+  const order = BRAND.productOrder;
+  if (!Array.isArray(order) || !order.length) return list;
+  const rank = new Map(order.map((h, i) => [h, i]));
+  return list
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => {
+      const ra = rank.has(a.p.handle) ? rank.get(a.p.handle) : Infinity;
+      const rb = rank.has(b.p.handle) ? rank.get(b.p.handle) : Infinity;
+      return ra === rb ? a.i - b.i : ra - rb;   // stable within a rank
+    })
+    .map((x) => x.p);
+}
+
 function renderGrid() {
   const grid = $("#grid");
-  const shown = allProducts.filter(matchesFilter);
+  const shown = applyOrder(allProducts.filter(matchesFilter));
 
   if (!shown.length) {
     grid.innerHTML = "";

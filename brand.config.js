@@ -231,6 +231,13 @@ export const BRAND = {
   //  Set up: tag the products portal:<slug> → build a smart collection on
   //  that tag → put its handle here. If the handle is wrong the portal
   //  fails loud with a named error rather than rendering an empty grid.
+  // Merchandising order, by product handle. Shopify smart collections cannot
+  // be sorted manually, so the order lives here. Handles not listed keep their
+  // Shopify order and follow the listed ones — a newly tagged product always
+  // shows up, it just lands at the end until you add it here.
+  // Leave as [] to use Shopify's own collection sort.
+  productOrder: [],
+
   collectionHandle: "portal-REPLACE",      // ‹REPLACE› must exist in Shopify
 
   shopDomain: "bro-basket.myshopify.com",
