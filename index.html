@@ -106,6 +106,24 @@
   </div>
 </aside>
 
+<!-- ══ Where We Ship ════════════════════════════════════════════════════
+     Opened from the header nav and from #shipping in the URL, so the map is
+     linkable without ever taking a shopper off the shop. Body is painted by
+     app.js from assets/shipping-coverage.js.
+
+     DISPLAY ONLY. This is a guide to where we generally deliver. Destination
+     eligibility is decided at Shopify checkout and nowhere else.
+     ══════════════════════════════════════════════════════════════════════ -->
+<div class="shipmap" id="ship-modal" data-open="false" role="dialog"
+     aria-modal="true" aria-labelledby="ship-title" aria-hidden="true">
+  <div class="shipmap__head">
+    <h2 class="shipmap__title" id="ship-title">Where We Ship</h2>
+    <button class="drawer__close" id="ship-close" type="button"
+            aria-label="Close">&times;</button>
+  </div>
+  <div class="shipmap__body" id="ship-body"></div>
+</div>
+
 <!-- ══ Help widget ═══════════════════════════════════════════════════════
      The form markup must be REAL, STATIC HTML in this file. Netlify detects
      forms by parsing the deployed HTML at build; a form injected by JS is
