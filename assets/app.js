@@ -1,4 +1,5 @@
 import { BRAND } from "../brand.config.js";
+import { COVERAGE } from "./shipping-coverage.js";
 
 /* ═══════════════════════════════════════════════════════════
    Boot: theme tokens, fonts, document chrome
@@ -1089,6 +1090,234 @@ function renderNav() {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Where We Ship
+
+   A modal, not a page: a shopper asking "do you deliver to me"
+   is mid-decision, and a page hop loses the cart context they
+   were building. #shipping in the URL still opens it, so the
+   map stays linkable from email and support replies.
+
+   DISPLAY ONLY. Eligibility is decided at Shopify checkout.
+   Which map applies comes from BRAND.shipping.categories.
+   ═══════════════════════════════════════════════════════════ */
+
+const SHIP_CONFIRM =
+  "Enter your address at checkout to confirm your exact order.";
+
+function shipCats() {
+  const c = BRAND.shipping?.categories ?? ["beer"];
+  return typeof c === "string" ? [c] : c;
+}
+
+let shipActive = shipCats()[0];
+let shipLastFocus = null;
+
+function shipStatus(code, cat) {
+  if (COVERAGE.notServed.includes(code)) return "no";
+  if (cat === "spirits" && COVERAGE.spiritsUnderReview.includes(code)) return "review";
+  return "ships";
+}
+
+function paintShipping() {
+  const cats = shipCats();
+  const body = $("#ship-body");
+  if (!body) return;
+
+  const states = Object.keys(COVERAGE.grid)
+    .sort((a, b) => COVERAGE.names[a].localeCompare(COVERAGE.names[b]));
+
+  const sig = BRAND.adultSignature || {};
+  const sigLine = sig.active && sig.line
+    ? sig.line
+    : "An adult 21 or over must sign on delivery.";
+
+  body.innerHTML = `
+    <p class="shipmap__lede">${cats.length > 1
+      ? "We ship from our licensed warehouse in Ventura, California. Spirits reach a shorter list of states than beer and wine."
+      : "We ship from our licensed warehouse in Ventura, California."}</p>
+
+    <label class="shipmap__label" for="ship-state">Choose your state</label>
+    <select class="shipmap__select" id="ship-state">
+      <option value="">Select a state</option>
+      ${states.map(c => `<option value="${c}">${COVERAGE.names[c]}</option>`).join("")}
+    </select>
+    <div class="shipmap__answer" id="ship-answer" role="status" aria-live="polite">
+      <span>Pick your state to see whether we can deliver there.</span>
+    </div>
+
+    ${cats.length > 1 ? `<div class="shipmap__cat" id="ship-cat" role="group"
+      aria-label="Product category">${cats.map(c => `
+      <button type="button" data-cat="${c}" aria-pressed="${c === shipActive}"
+        >${COVERAGE.categories[c].short}</button>`).join("")}</div>` : ""}
+
+    <h3 class="shipmap__cathead" id="ship-cathead"></h3>
+    <p class="shipmap__count" id="ship-count"></p>
+    <div class="shipmap__grid" id="ship-grid" aria-hidden="true"></div>
+    <div class="shipmap__legend" id="ship-legend"></div>
+    <p class="shipmap__excluded" id="ship-excluded"></p>
+
+    <div class="shipmap__fine">
+      <p>Orders are sold and shipped by Go-To Gifting LLC, the licensed
+         retailer of record, out of Ventura, California.</p>
+      <p>Every order is age-verified at checkout before payment is taken.
+         ${sigLine} We can't leave alcohol at the door and we can't ship
+         to a PO box.</p>
+      <p>Whether we can ship a particular order also depends on the product
+         itself — category, alcohol content and container format all matter,
+         not just the destination. This is a guide to where we generally
+         deliver. Your cart is checked against your address at checkout, and
+         that check is what decides your order.</p>
+      <p>Coverage is current as of ${COVERAGE.effective} and can change. If
+         anything here conflicts with what checkout tells you, checkout is
+         right.</p>
+    </div>`;
+
+  $("#ship-state").addEventListener("change", paintShipAnswer);
+
+  const catBox = $("#ship-cat");
+  if (catBox) {
+    catBox.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-cat]");
+      if (!btn) return;
+      shipActive = btn.dataset.cat;
+      for (const b of catBox.querySelectorAll("button")) {
+        b.setAttribute("aria-pressed", String(b === btn));
+      }
+      paintShipMap();
+    });
+  }
+  paintShipMap();
+}
+
+function paintShipMap() {
+  const meta = COVERAGE.categories[shipActive];
+  $("#ship-cathead").textContent = meta.label;
+  $("#ship-count").textContent = `We ship to ${meta.count}.`;
+
+  const grid = $("#ship-grid");
+  grid.innerHTML = "";
+  for (const [code, [row, col]] of Object.entries(COVERAGE.grid)) {
+    const t = document.createElement("div");
+    t.className = "shipmap__tile";
+    t.dataset.s = shipStatus(code, shipActive);
+    t.style.gridRow = row;
+    t.style.gridColumn = col;
+    t.textContent = code;
+    t.title = COVERAGE.names[code];
+    grid.appendChild(t);
+  }
+
+  $("#ship-legend").innerHTML =
+    `<span><i class="shipmap__swatch" data-s="ships"></i>We ship here</span>` +
+    (shipActive === "spirits"
+      ? `<span><i class="shipmap__swatch" data-s="review"></i>Not yet</span>` : "") +
+    `<span><i class="shipmap__swatch"></i>Not available</span>`;
+
+  const closed = COVERAGE.notServed.map(c => COVERAGE.names[c]).join(", ");
+  let txt = `Not available in ${closed}.`;
+  if (shipActive === "spirits") {
+    txt += ` Spirits are also on hold in ${
+      COVERAGE.spiritsUnderReview.map(c => COVERAGE.names[c]).join(", ")
+    } while we confirm a carrier.`;
+  }
+  $("#ship-excluded").textContent = txt;
+
+  paintShipAnswer();
+}
+
+function paintShipAnswer() {
+  const el = $("#ship-answer");
+  const code = $("#ship-state").value;
+  if (!code) {
+    delete el.dataset.state;
+    el.innerHTML = "<span>Pick your state to see whether we can deliver there.</span>";
+    return;
+  }
+
+  const name = COVERAGE.names[code];
+  const cats = shipCats();
+  const yes = cats.filter(c => shipStatus(code, c) === "ships");
+  const review = cats.filter(c => shipStatus(code, c) === "review");
+
+  if (yes.length === cats.length) {
+    el.dataset.state = "ships";
+    el.innerHTML = `<strong>We ship to ${name}.</strong><span>${SHIP_CONFIRM}</span>`;
+  } else if (yes.length) {
+    const list = yes.map(c => COVERAGE.categories[c].short.toLowerCase()).join(" and ");
+    const why = review.length
+      ? "Spirits aren't available there yet while we confirm a second carrier."
+      : "We can't ship spirits there.";
+    el.dataset.state = "ships";
+    el.innerHTML = `<strong>${list.charAt(0).toUpperCase() + list.slice(1)} ship to ${name}.</strong>` +
+      `<span>${why} ${SHIP_CONFIRM}</span>`;
+  } else if (review.length) {
+    el.dataset.state = "review";
+    el.innerHTML = `<strong>Not yet in ${name}.</strong>` +
+      `<span>We're confirming a carrier that reaches ${name}. Check back soon.</span>`;
+  } else {
+    el.dataset.state = "no";
+    el.innerHTML = `<strong>We can't ship to ${name} right now.</strong>` +
+      `<span>State law and carrier rules keep this one closed to us.</span>`;
+  }
+}
+
+function openShipping() {
+  if ($("#drawer")?.dataset.open === "true") closeDrawer();
+  if ($("#help-panel")?.dataset.open === "true") closeHelp();
+
+  shipLastFocus = document.activeElement;
+  $("#ship-modal").dataset.open = "true";
+  $("#ship-modal").setAttribute("aria-hidden", "false");
+  $("#scrim").dataset.open = "true";
+  document.body.style.overflow = "hidden";
+  $("#ship-close").focus();
+  document.addEventListener("keydown", onShipKey);
+}
+
+function closeShipping() {
+  $("#ship-modal").dataset.open = "false";
+  $("#ship-modal").setAttribute("aria-hidden", "true");
+  $("#scrim").dataset.open = "false";
+  document.body.style.overflow = "";
+  document.removeEventListener("keydown", onShipKey);
+  if (location.hash === "#shipping") {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  shipLastFocus?.focus();
+}
+
+function onShipKey(e) {
+  if (e.key === "Escape") { closeShipping(); return; }
+  if (e.key !== "Tab") return;
+  const f = $("#ship-modal").querySelectorAll(
+    'button:not([disabled]), a[href], select, input, [tabindex]:not([tabindex="-1"])'
+  );
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+function initShipping() {
+  paintShipping();
+  $("#ship-close").addEventListener("click", closeShipping);
+
+  // Any link pointing at #shipping opens the modal instead of jumping.
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href="#shipping"], a[href$="/shipping.html"]');
+    if (!a) return;
+    e.preventDefault();
+    openShipping();
+  });
+
+  // Deep link: /#shipping opens it on load, and on later hash changes.
+  if (location.hash === "#shipping") openShipping();
+  window.addEventListener("hashchange", () => {
+    if (location.hash === "#shipping") openShipping();
+  });
+}
+
 function showLoading() {
   const grid = $("#grid");
   grid.className = "grid";
@@ -1118,6 +1347,7 @@ async function init() {
     paintTape();
     paintNotices();
     initHelp();
+    initShipping();
   } catch (err) {
     console.error("[chrome] header/footer failed to paint", err);
   }
@@ -1126,7 +1356,10 @@ async function init() {
 
   $("#cart-open").addEventListener("click", openDrawer);
   $("#drawer-close").addEventListener("click", closeDrawer);
-  $("#scrim").addEventListener("click", closeDrawer);
+  $("#scrim").addEventListener("click", () => {
+    if ($("#ship-modal").dataset.open === "true") closeShipping();
+    else closeDrawer();
+  });
   $("#checkout").addEventListener("click", checkout);
 
   showLoading();
