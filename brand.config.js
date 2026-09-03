@@ -99,7 +99,7 @@ export const BRAND = {
     { label: "Shop",  href: "#grid" },
     { label: "About", href: "https://REPLACE.com/about", external: true },
     { label: "Visit", href: "https://REPLACE.com/visit", external: true },
-    { label: "Where We Ship", href: "/shipping.html" },
+    { label: "Where We Ship", href: "#shipping" },
   ],
 
   // Announcement bar. DISPLAY ONLY — never the enforcement layer.
