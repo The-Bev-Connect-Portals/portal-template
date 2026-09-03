@@ -73,6 +73,16 @@ export const BRAND = {
       "&family=Barlow:wght@400;500;600;700&display=swap",  // ‹REPLACE›
   },
 
+  // ── Shipping coverage page ────────────────────────────────
+  //  Drives /shipping.html. Which coverage map applies to this
+  //  brand's products:
+  //    "beer"     beer, wine, malt- and wine-based RTDs  (46 + DC)
+  //    "spirits"  spirits and spirits-based RTDs         (40 + DC)
+  //  Spirits-based canned cocktails are "spirits", not "beer".
+  //  Both listed renders a toggle. The state data itself lives in
+  //  assets/shipping-coverage.js and is identical in every repo.
+  shipping: { categories: ["beer"] },
+
   // ── Copy ──────────────────────────────────────────────────
   tagline: "REPLACE — one line on what they brew, shipped to your door.",
   heroKicker: "REPLACE \u00b7 Kicker",      // small line above the H1
