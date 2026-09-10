@@ -243,11 +243,14 @@ export const BRAND = {
   //  that tag → put its handle here. If the handle is wrong the portal
   //  fails loud with a named error rather than rendering an empty grid.
   //
-  //  ⚠ portal-mother-earth is a MANUAL collection (ruleSet is null), not a
-  //    smart one. The portal:<slug> tag alone does NOT put a product in the
-  //    grid — a new product must be added to the collection explicitly or it
-  //    stays invisible while looking correct everywhere else in admin.
-  //    Verify with: collectionByHandle(handle:"portal-<slug>") { ruleSet }
+  //  ⚠ portal-<slug> collections are ALWAYS smart, never manual. The rule is
+  //    TAG EQUALS portal:<slug>, appliedDisjunctively: false. Tagging a
+  //    product is therefore the ONE action that puts it in the grid.
+  //    A manual collection looks identical in admin but silently drops any
+  //    newly tagged product, so check before trusting it:
+  //      collectionByHandle(handle:"portal-<slug>") { ruleSet }
+  //    ruleSet: null means manual — convert it with collectionUpdate before
+  //    adding products. All six portal collections were converted 2026-09-10.
   // Merchandising order, by product handle. Shopify smart collections cannot
   // be sorted manually, so the order lives here. Handles not listed keep their
   // Shopify order and follow the listed ones — a newly tagged product always
