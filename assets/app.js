@@ -177,10 +177,36 @@ async function loadCatalog() {
 const CART_KEY = `cart:${BRAND.slug}`;
 let cart = [];
 
+// A cart saved while the portal was in demo mode holds synthetic variant
+// ids (`<handle>-variant`, minted by demoCatalog). The moment demoProducts
+// is emptied those ids mean nothing to Shopify, but the cart survives in
+// localStorage and looks completely normal — right title, right price. The
+// shopper only finds out at checkout, where cartCreate rejects the whole
+// cart with "Invalid global id" and nothing can be bought until they clear
+// site data. So drop any line Shopify could never accept.
+//
+// Only outside demo mode: in demo the synthetic ids are the correct ones.
+const isShopifyVariantId = (id) =>
+  typeof id === "string" && /^gid:\/\/shopify\/ProductVariant\/\d+$/.test(id);
+
 try {
   cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
   if (!Array.isArray(cart)) cart = [];
 } catch { cart = []; }
+
+if (!DEMO) {
+  const before = cart.length;
+  cart = cart.filter((l) => l && isShopifyVariantId(l.variantId));
+  if (cart.length !== before) {
+    // Write straight to storage rather than saveCart() — the DOM isn't
+    // built yet at module scope and saveCart paints the cart UI.
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch {}
+    console.info(
+      `[portal] Dropped ${before - cart.length} stale cart line(s) left over ` +
+      `from demo mode; they could not be checked out.`
+    );
+  }
+}
 
 function saveCart() {
   try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch {}
